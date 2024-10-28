@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:monitor/screens/dashboard.dart';
+import 'package:monitor/screens/monitoring/home.dart';
 import 'package:monitor/screens/setting.dart';
 import 'package:monitor/utils/colors.dart';
 
@@ -16,7 +17,7 @@ class _AppTemplateState extends State<AppTemplate> {
 
   static const List<Widget> listPage = <Widget>[
     DashboardScreen(),
-    Placeholder(),
+    HomeMonitoringScreen(),
     SettingScreen(),
   ];
 
