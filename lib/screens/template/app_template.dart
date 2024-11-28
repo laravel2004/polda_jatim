@@ -5,15 +5,22 @@ import 'package:monitor/screens/setting.dart';
 import 'package:monitor/utils/colors.dart';
 
 class AppTemplate extends StatefulWidget {
-  const AppTemplate({super.key});
+  final int initialIndex;
+
+  const AppTemplate({super.key, this.initialIndex = 0});
 
   @override
   State<AppTemplate> createState() => _AppTemplateState();
 }
 
 class _AppTemplateState extends State<AppTemplate> {
+  late int _selectedIndex;
 
-  int _selectedIndex = 0;
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.initialIndex;
+  }
 
   static const List<Widget> listPage = <Widget>[
     DashboardScreen(),
@@ -26,7 +33,6 @@ class _AppTemplateState extends State<AppTemplate> {
       _selectedIndex = index;
     });
   }
-
 
   @override
   Widget build(BuildContext context) {

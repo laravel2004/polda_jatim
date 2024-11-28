@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:monitor/models/general_model.dart';
+import 'package:monitor/utils/constant.dart';
+import 'package:monitor/utils/data_state.dart';
+import 'package:monitor/view_models/general/general_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class StorageScreen extends StatefulWidget {
   const StorageScreen({super.key});
@@ -8,112 +13,86 @@ class StorageScreen extends StatefulWidget {
 }
 
 class _StorageScreenState extends State<StorageScreen> {
+  final GeneralService _generalService = GeneralService();
+  DataState<List<GeneralModel>> _memoryStat = DataLoading();
+  late String host;
+
+  @override
+  void initState() {
+    super.initState();
+    handleGetMemoryStat();
+  }
+
+  void handleGetMemoryStat() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    host = prefs.getString('host') ?? '';
+    setState(() {
+      _memoryStat = DataLoading();
+    });
+
+    try {
+      final result = await _generalService.getNetworkStat('disk');
+      setState(() {
+        _memoryStat = result;
+      });
+    } catch (e) {
+      setState(() {
+        _memoryStat = DataError(e.toString());
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    if (_memoryStat is DataError) {
+      return const Scaffold(
+        body: Center(
+          child: Text("Fetched data error"),
+        ),
+      );
+    }
+
+    if (_memoryStat is DataLoading) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    final data = (_memoryStat as DataSuccess<List<GeneralModel>>).data;
+
+    return Scaffold(
       body: SafeArea(
-        child: Column(
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(height: 50,),
-                Align(
-                  alignment: Alignment.center,
-                  child: Text(
-                    'Storage',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.w400,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: ListView.builder(
+            itemCount: data?.length ?? 0,
+            itemBuilder: (context, index) {
+              final item = data![index];
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 20),
+                  Text(
+                    item.name,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
-                ),
-                SizedBox(height: 20),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 16.0),
-                    child: Text(
-                      'Size \n58.23 GB',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
+                  const SizedBox(height: 10),
+                  Image.network(
+                    '${BASE_IMAGE}/chart2.php?graphid=${item.graphId}',
+                    width: double.infinity,
+                    height: 200,
+                    fit: BoxFit.cover,
                   ),
-                ),
-                SizedBox(height: 20),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 16.0),
-                    child: Text(
-                      'Type \nSSID',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 20),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 16.0),
-                    child: Text(
-                      'Vendor \nN/A',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 50,),
-                Align(
-                  alignment: Alignment.center,
-                  child: Text(
-                    'Volumes',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 20),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 16.0),
-                    child: Text(
-                      'Storage devices \n/dev/mmcblk0',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 20),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 16.0),
-                    child: Text(
-                      'Type \npart',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
+                  const SizedBox(height: 20),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );

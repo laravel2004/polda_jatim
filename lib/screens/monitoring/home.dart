@@ -16,13 +16,12 @@ class _HomeMonitoringScreenState extends State<HomeMonitoringScreen> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-        length: 5,
+        length: 4,
         child: Scaffold(
             appBar: AppBar(
               title: const Text('Monitoring'),
               bottom: const TabBar(
                 tabs: <Widget>[
-                  Tab(icon: Icon(Icons.computer), text: 'System'),
                   Tab(icon: Icon(Icons.memory_outlined), text: 'CPU'),
                   Tab(icon: Icon(Icons.sd_storage), text: 'Memory'),
                   Tab(icon: Icon(Icons.storage), text: 'Storage'),
@@ -32,7 +31,6 @@ class _HomeMonitoringScreenState extends State<HomeMonitoringScreen> {
             ),
             body: const TabBarView(
               children: [
-                SystemScreen(),
                 CpuScreen(),
                 MemoryScreen(),
                 StorageScreen(),
