@@ -1,8 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:monitor/models/general_model.dart';
 import 'package:monitor/utils/data_state.dart';
-import 'package:monitor/view_models/network/network_receive.dart';
-import 'package:monitor/view_models/network/network_transport.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class GeneralService {
