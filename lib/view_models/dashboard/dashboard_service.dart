@@ -34,6 +34,7 @@ class DashboardService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final host = prefs.getString('host');
     final token = prefs.getString('token');
+    final serverId = prefs.getString('serverId');
 
     final response = await dio.post(
       '$host/api_jsonrpc.php',
@@ -41,6 +42,7 @@ class DashboardService {
         "jsonrpc": "2.0",
         "method": "event.get",
         "params": {
+          "hostids": serverId,
           "output": "extend",
           "selectTags": "extend",
           "sortfield": ["clock"],
